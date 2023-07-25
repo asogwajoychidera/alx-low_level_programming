@@ -9,5 +9,5 @@ while (*str != '\0')
 {
 _putchar(*str++);
 }
-_pitchar('\n');
+_putchar('\n');
 }

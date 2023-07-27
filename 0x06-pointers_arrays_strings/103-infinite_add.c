@@ -65,7 +65,7 @@ overflow = 0;
 if (digits >= (size_r - 1))
 return (0);
 *(r + digits) = (temp_tot % 10) + '0';
-digit++;
+digits++;
 j--;
 i--;
 }

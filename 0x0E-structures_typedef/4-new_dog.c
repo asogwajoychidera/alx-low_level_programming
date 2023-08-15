@@ -1,80 +1,66 @@
 #include "dog.h"
-
-
+#include <stdlib.h>
 /**
-*_strlen - returns length of
-*a string
-*@str: string to be counted
-*Return: returns length of string
-*/
-int _strlen(char *str)
+ * _strdup - returns a pointer to a newly allocated space in memory, which
+ * contains a copy of the string given as a parameter.
+ * @str: string to copy
+ *
+ * Return: Pointer
+ */
+char *_strdup(char *str)
 {
-int len = 0;
-while (str)
-len++;
+int l, i;
+char *s;
 
-return (len);
-}
+if (str == NULL)
+return (0);
 
+l = 0;
+while (*(str + l))
+l++;
 
-/**
-*_strcopy - copy string pointed by src
-*into dest variable
-*@dest:buffer storing string copy
-*@src: buffer storing string to copy
-*Return:returns copied string
-*/
-char *_strcopy(char *dest, char *src)
+s = malloc(sizeof(char) * l + 1);
+
+if (s == 0)
+return (0);
+
+for (i = 0; i <= l; i++)
 {
-int index = 0;
-
-for (; src[index] ; index++)
-dest[index] = src[index];
-
-dest[index] = '\0';
-return (dest);
+*(s + i) = *(str + i);
 }
-
-
-
-
+return (s);
+}
 /**
-*new_dog - creates a new dog
-*@name: name of new dog
-*@age: age of new dog
-*@owner: owner of new dog
-*Return: returns NULL in case
-*of failure
-*/
+ * new_dog - creates a new dog
+ * @name: name of dog
+ * @age: age of dog
+ * @owner: owner of dog
+ *
+ * Return: On success 1.
+ * On error, -1 is returned, and errno is set appropriately.
+ */
 dog_t *new_dog(char *name, float age, char *owner)
 {
-dog_t *doggo;
+dog_t *new_dog;
 
-if (name == NULL || age < 0 || owner == NULL)
-return (NULL);
+new_dog = malloc(sizeof(struct dog));
 
-doggo = malloc(sizeof(dog_t));
-if (doggo == NULL)
-return (NULL);
+if (new_dog == 0 || name == 0 || owner == 0)
+return (0);
 
-doggo->name = malloc(sizeof(char) * (_strlen(name) + 1));
-if (doggo->name == NULL)
+new_dog->name = _strdup(name);
+if (new_dog->name == 0)
 {
-free(doggo);
-return (NULL);
+free(new_dog);
+return (0);
 }
-
-doggo->owner = malloc(sizeof(char) * (_strlen(owner) + 1));
-if (doggo->owner == NULL)
+new_dog->age = age;
+new_dog->owner = _strdup(owner);
+if (new_dog->owner == 0)
 {
-free(doggo->name);
-free(doggo);
-return (NULL);
+free(new_dog);
+free(new_dog->name);
+return (0);
 }
-
-doggo->name = _strcopy(doggo->name, name);
-doggo->age = age;
-doggo->owner = _strcopy(doggo->owner, owner);
-
-return (doggo);
+return (new_dog);
 }

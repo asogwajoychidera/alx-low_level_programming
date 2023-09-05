@@ -1,41 +1,51 @@
 #include "main.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
 #include <stdlib.h>
 
 /**
- * read_textfile - Reads a text file and prints it to POSIX stdout.
- * @filename: A pointer to the name of the file.
- * @letters: The number of letters the
- *           function should read and print.
+ * read_textfile -  reads a text file and prints it
+ * to the POSIX standard output
+ * @filename: name of the file
+ * @letters: number of letters it should read and print
  *
- * Return: If the function fails or filename is NULL - 0.
- *         O/w - the actual number of bytes the function can read and print.
+ * Return: returns the actual number of letters it could read and print
+ * 0 if file cannot be opened or read
+ * 0 if filename is NULL
+ * 0 if write fails or does not write expected amount of bytes
  */
-
 ssize_t read_textfile(const char *filename, size_t letters)
 {
-ssize_t o, r, w;
-char *buffer;
+int fd, checkr, checkw;
+char *c;
 
-if (filename == NULL)
+if (filename == 0)
 return (0);
 
-buffer = malloc(sizeof(char) * letters);
-if (buffer ==  NULL)
+c = malloc(letters + 1);
+
+if (c == 0)
 return (0);
 
-o = open(filename, O_RDONLY);
-r = read(o, buffer, letters);
-w = write(STDOUT_FILENO, buffer, r);
+fd  = open(filename, O_RDONLY);
 
-if (o == -1 || r == -1 || w == -1 || w != r)
-{
-free(buffer);
-return (0);
-}
+if (fd == -1)
+return (free(c), 0);
 
-free(buffer);
-close(o);
+checkr = read(fd, c, letters);
 
-return (w);
+if (checkr == -1)
+return (free(c), 0);
 
+c[letters] = '\0';
+
+checkw = write(STDOUT_FILENO, c, checkr);
+if (checkw == -1)
+return (free(c), 0);
+
+free(c);
+close(fd);
+return (checkw);
 }
